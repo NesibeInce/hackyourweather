@@ -1,31 +1,54 @@
-import React from 'react';
-import WeatherJson from '../city-weather.json';
+import React, { useState } from 'react';
+import CityInfo from './CityInfo';
+import Search from './Search';
 
 function CityWeather() {
+  const [cityData, setCityData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  function getCity(city) {
+    setLoading(true);
+    fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=1e445d2593ae5af2f01388c928a96c44`,
+    )
+      .then(res => res.json())
+      .then(data => {
+        setCityData(data);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.log(error);
+        setHasError(true);
+        setLoading(false);
+      });
+    console.log(cityData);
+  }
+  // useEffect(() => {
+  //   getCity(city);
+  // }, []);
+  if (hasError) {
+    return (
+      <div>
+        <p>There is something wrong</p>
+      </div>
+    );
+  }
+  if (loading) {
+    return (
+      <div>
+        <p>City weather information is loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1>Weather</h1>
-      {WeatherJson.map(city => {
-        return (
-          <div className="city">
-            <h2>
-              {city.name}, {city.sys.country}
-            </h2>
-            <h3>{city.weather[0].main}</h3>
-            <p>{city.weather[0].description}</p>
-            <p>Max Temp: {city.main.temp_max}</p>
-            <p>Min Temp: {city.main.temp_min}</p>
-            <p>
-              Location: {city.coord.lon}, {city.coord.lat}
-            </p>
-          </div>
-        );
-      })}
+      <Search getCity={getCity} />
+      <CityInfo cityData={cityData} />
     </div>
   );
 }
 
 export default CityWeather;
-
-// Key	No
-// 1e445d2593ae5af2f01388c928a96c44
