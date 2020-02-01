@@ -1,20 +1,27 @@
 import React from 'react';
 
-function cityInfo({ cityData }) {
-  return (
-    <div className="cityData">
-      <h2>
-        {cityData.name}, {cityData.sys.country}
-      </h2>
-      <h3>{cityData.weather[0].main}</h3>
-      <p>{cityData.weather[0].description}</p>
-      <p>Max Temp: {cityData.main.temp_max}</p>
-      <p>Min Temp: {cityData.main.temp_min}</p>
-      <p>
-        Location: {cityData.coord.lon}, {cityData.coord.lat}
-      </p>
-    </div>
-  );
-}
-
-export default cityInfo;
+const CityInfo = ({ cityWeather }) => {
+  if (cityWeather.cod == 404) {
+    return <h3>City not Found, please check the spelling for the city</h3>;
+  } else {
+    return (
+      <div className="container">
+        <h1 className="cityName">
+          {cityWeather.name}, {cityWeather.sys.country}
+        </h1>
+        <div className="main">
+          <h3>{cityWeather.weather[0].main}</h3>
+          <p>{cityWeather.weather[0].description}</p>
+        </div>
+        <div className="details">
+          <p>min temp: {(cityWeather.main.temp_min - 273.15).toFixed(2)} °C</p>
+          <p>max temp: {(cityWeather.main.temp_max - 273.15).toFixed(2)} °C</p>
+          <p>
+            location: {cityWeather.coord.lon}, {cityWeather.coord.lat}
+          </p>
+        </div>
+      </div>
+    );
+  }
+};
+export default CityInfo;

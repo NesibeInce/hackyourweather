@@ -1,54 +1,44 @@
 import React, { useState } from 'react';
 import CityInfo from './CityInfo';
-import Search from './Search';
+import SearchButton from './SearchButton';
 
-function CityWeather() {
-  const [cityData, setCityData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+const CityWeather = () => {
+  const [cityWeather, setCityWeather] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [hasError, setError] = useState(false);
+  const [result, setResult] = useState('notDone');
 
   function getCity(city) {
     setLoading(true);
     fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=1e445d2593ae5af2f01388c928a96c44`,
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.REACT_APP_OPENWEATHERMAP_API_KEY}`,
     )
       .then(res => res.json())
       .then(data => {
-        setCityData(data);
         setLoading(false);
+        setCityWeather(data);
+        setResult('Done');
       })
-      .catch(error => {
-        console.log(error);
-        setHasError(true);
+      .catch(err => {
+        setError(true);
         setLoading(false);
       });
-    console.log(cityData);
   }
-  // useEffect(() => {
-  //   getCity(city);
-  // }, []);
   if (hasError) {
-    return (
-      <div>
-        <p>There is something wrong</p>
-      </div>
-    );
+    return <p>Something went wrong</p>;
   }
   if (loading) {
+    return <p>Loading data...</p>;
+  }
+  if (cityWeather) {
     return (
       <div>
-        <p>City weather information is loading...</p>
+        <h1>Weather</h1>
+        <SearchButton getCity={getCity} />
+        {result === 'Done' && <CityInfo cityWeather={cityWeather} />}
       </div>
     );
   }
-
-  return (
-    <div>
-      <h1>Weather</h1>
-      <Search getCity={getCity} />
-      <CityInfo cityData={cityData} />
-    </div>
-  );
-}
+};
 
 export default CityWeather;
