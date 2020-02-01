@@ -24,9 +24,6 @@ const CityWeather = () => {
         setLoading(false);
       });
   }
-  if (hasError) {
-    return <p>Something went wrong</p>;
-  }
   if (loading) {
     return <p>Loading data...</p>;
   }

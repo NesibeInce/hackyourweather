@@ -1,11 +1,13 @@
 import React from 'react';
+import RemoveCity from './RemoveCity';
 
-const CityInfo = ({ cityWeather }) => {
+const CityInfo = ({ cityWeather, remove }) => {
   if (cityWeather.cod == 404) {
     return <h3>City not Found, please check the spelling for the city</h3>;
   } else {
     return (
       <div className="container">
+        <RemoveCity removeCity={remove} item={cityWeather} />
         <h1 className="cityName">
           {cityWeather.name}, {cityWeather.sys.country}
         </h1>
