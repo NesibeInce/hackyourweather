@@ -8,6 +8,7 @@
   width: 380px;
   text-align: left;
   border: 1px solid gray;
+  margin-bottom: 10px;
 }
 .cityName,
 .main,

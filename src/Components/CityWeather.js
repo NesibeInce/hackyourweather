@@ -6,7 +6,7 @@ const CityWeather = () => {
   const [cityWeather, setCityWeather] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasError, setError] = useState(false);
-  const [result, setResult] = useState('notDone');
+  const [entry, setEntry] = useState('Enter the city name to get the weather');
 
   function getCity(city) {
     setLoading(true);
@@ -16,23 +16,30 @@ const CityWeather = () => {
       .then(res => res.json())
       .then(data => {
         setLoading(false);
-        setCityWeather(data);
-        setResult('Done');
+        const cities = cityWeather.filter(city => city.id !== data.id);
+        if (data.cod === 200) {
+          setCityWeather([data, ...cities]);
+        }
+        if (data.cod !== 200) setEntry(`City Not Found, check the spelling for " ${city} "`);
       })
       .catch(err => {
         setError(true);
         setLoading(false);
       });
   }
-  if (loading) {
-    return <p>Loading data...</p>;
+
+  function removeCity(id) {
+    const cities = cityWeather.filter(city => city.id !== id);
+    setCityWeather(cities);
   }
-  if (cityWeather) {
+  if (loading) {
+    return <h3>Loading...</h3>;
+  } else {
     return (
       <div>
-        <h1>Weather</h1>
+        <h4>{entry}</h4>
         <SearchButton getCity={getCity} />
-        {result === 'Done' && <CityInfo cityWeather={cityWeather} />}
+        {cityWeather && <CityInfo cityWeather={cityWeather} remove={removeCity} />}
       </div>
     );
   }
